@@ -1,0 +1,36 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+#LOG program.
+# defines command 'log' which creates text files auto-named with date and category.
+
+#currently allows bad characters in filename, watch out.
+#further todos:
+# [] whitespace replacement doesn't filter out starting spaces
+
+my ($invocation_command, $invocation_type,$note_title, $note_title_dashes, $date, $type, $file_handle, $filename);
+
+$invocation_command = shift @ARGV;
+$invocation_type = shift @ARGV;
+$type = $invocation_type =~ s/(.*)/\U$1/r;
+
+print "Enter title:\n";
+
+chomp($note_title = <STDIN>);
+$note_title_dashes = $note_title =~ s/\s/-/gr;
+
+$date = time;
+
+if ($invocation_command eq 'new') {
+    $filename = "$date"."_"."$type"."_"."$note_title_dashes".".txt\n";
+}
+
+#now I just need to make it write the file, and then I can go eat. Hackish way?
+#NOTE: relies on unique timestamp to avoid overwriting files!
+
+open FILEHANDLE, "> "."$filename";
+print FILEHANDLE ":title: $note_title\n\n";
+close FILEHANDLE;
+system "gedit $filename";
+exit;
